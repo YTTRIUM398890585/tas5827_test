@@ -1,0 +1,4 @@
+.pio/
+.vscode/
+STM32CUBE_Generated/*
+!STM32CUBE_Generated/TAS5827.ioc
