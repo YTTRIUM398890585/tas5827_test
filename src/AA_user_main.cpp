@@ -31,11 +31,23 @@ void user_setup()
 	powerAmp.setGPIOSel(TAS5827::GPIO_Sel_t::FAULTZ, TAS5827::GPIO_Sel_t::WARNZ, TAS5827::GPIO_Sel_t::PVDD_DROP);
 	// powerAmp.setGPIOSel(TAS5827::GPIO_Sel_t::PVDD_DROP, TAS5827::GPIO_Sel_t::PVDD_DROP, TAS5827::GPIO_Sel_t::PVDD_DROP);
 
+	// Set the play volume
+	float dB = -3;
+
+	uint8_t vol = 0;
+
+	vol = static_cast<float>((24.0 - dB) * 2.0);
+
+	powerAmp.setDigVolLeft(vol);
+	powerAmp.setDigVolRight(vol);
+	powerAmp.setAnalogGain(0x00);
+
 	// Set other stuff
 	powerAmp.setPvddUvCtrl(true, TAS5827::UV_Avg_t::NO_AVG, true);
 	// powerAmp.setMiscCtrl2(true, true, true);
 
-	// powerAmp.setDevCtrl2(true, false, false, TAS5827::Power_State_t::PLAY);
+	// Set top play
+	powerAmp.setDevCtrl2(true, false, false, TAS5827::Power_State_t::PLAY);
 }
 
 void user_loop()
@@ -122,14 +134,14 @@ void user_loop()
 	if (powerAmp.getPVDD(&voltage)) {
 		int voltageInt = (int)(voltage * 1000); // Convert to mV
 
-		// SEGGER_RTT_printf(0, "PVDD: %u mV\r\n", voltageInt);
+		SEGGER_RTT_printf(0, "PVDD: %u mV\r\n", voltageInt);
 
-		if (voltage == 0) {
-			SEGGER_RTT_WriteString(0, "its legit 0\r\n");
-		}
-		else {
-			SEGGER_RTT_WriteString(0, "somthign worng with string \r\n");
-		}
+		// if (voltage == 0) {
+		// 	SEGGER_RTT_WriteString(0, "its legit 0\r\n");
+		// }
+		// else {
+		// 	SEGGER_RTT_WriteString(0, "somthign worng with string \r\n");
+		// }
 	}
 	else {
 		SEGGER_RTT_WriteString(0, "Error reading PVDD voltage\r\n");
