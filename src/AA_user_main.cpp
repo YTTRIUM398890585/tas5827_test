@@ -32,7 +32,7 @@ void user_setup()
 	// powerAmp.setGPIOSel(TAS5827::GPIO_Sel_t::PVDD_DROP, TAS5827::GPIO_Sel_t::PVDD_DROP, TAS5827::GPIO_Sel_t::PVDD_DROP);
 
 	// Set the play volume
-	float dB = -3;
+	float dB = -20;
 
 	uint8_t vol = 0;
 
@@ -58,6 +58,8 @@ void user_loop()
 	bool bclkMissing;
 	bool blckNotValid;
 	bool fsNotValid;
+
+	SEGGER_RTT_printf(0, "========================== tick: %u\r\n", HAL_GetTick());
 
 	if (powerAmp.getClockDetStatus(&bclkOverRate, &pllOverRate, &p_pllNotLocked, &bclkMissing, &blckNotValid, &fsNotValid)) {
 		bclkOverRate ? SEGGER_RTT_WriteString(0, "BCLK Over Rate\r\n") : SEGGER_RTT_WriteString(0, "BCLK Under Rate\r\n");
@@ -163,8 +165,7 @@ void user_loop()
 	HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
 	HAL_Delay(500);
 
-	SEGGER_RTT_printf(0, "========================== tick: %u\r\n", HAL_GetTick());
-	powerAmp.setFaultClear();
+	// powerAmp.setFaultClear();
 }
 
 void user_error_handler()
