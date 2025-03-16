@@ -9,9 +9,11 @@ import paramiko
 import time
 
 # CONSTANTS
-DEVICE = 'TCPIP0::169.254.212.129::INSTR'
+# Couldnt figure out how to set static IP for the scope
+# DEVICE = 'TCPIP0::169.254.212.129::INSTR'
+DEVICE = 'TCPIP0::169.254.215.207::INSTR'
 MEASUREMENT_CHANNEL = 'MATH1'
-DELAY = 5  # Delay in seconds to wait for the signal to stabilize
+DELAY = 10  # Delay in seconds to wait for the signal to stabilize
 
 
 def getVrms():
@@ -27,7 +29,18 @@ def getVrms():
     # temp_values = MSO_X_3024T.query_ascii_values(
     #     ':MEASure:VPP? %s' % (MEASUREMENT_CHANNEL))
 
+    print("getVrms = " + str(temp_values[0]))
     # Return the Vrms value
+    return temp_values[0]
+
+
+def getTHD(freq):
+    # temp_values = MSO_X_3024T.query_ascii_values(
+    #     ':MEASure:FFT:THD? %s,%G,%s' % ('AUTO', freq, 'FFT'))
+    # print("getTHD @ " + str(freq) + " Hz = " + str(temp_values[0]))
+    temp_values = MSO_X_3024T.query_ascii_values(
+        ':MEASure:FFT:THD? %s,%s' % ('AUTO', 'FFT'))
+    print("getTHD @ " + str(freq) + " Hz = " + str(temp_values[0]))
     return temp_values[0]
 
 
@@ -58,13 +71,14 @@ def stopSine():
 
 
 # Define the set of frequencies to loop through
-# Every integer multiple of 100 Hz from 100 Hz to 80 kHz
-# frequencies = [100 * i for i in range(1, 801)]
+# Every integer multiple of 1000 Hz from 100 Hz to 80 kHz
+frequencies = [1000 * i for i in range(1, 81)]
 # Short one for sanity check
-frequencies = [100, 1000, 10000, 50000, 60000, 70000, 80000]
+# frequencies = [1000, 10000, 50000, 60000, 70000, 80000]
 
 # Create a list to store the results
 voltages = []
+thds = []
 
 # Open the resource manager
 rm = visa.ResourceManager()
@@ -102,7 +116,7 @@ print("Estimated time to run: " +
 # Write the results to a CSV file
 with open('results.csv', 'w', newline='') as csvfile:
     csvwriter = csv.writer(csvfile)
-    csvwriter.writerow(['Frequency (Hz)', 'Vpbtl (Vrms)'])
+    csvwriter.writerow(['Frequency (Hz)', 'Vpbtl (Vrms)', 'THD (%)'])
 
     # Loop through the set of frequencies
     for freq in frequencies:
@@ -115,13 +129,17 @@ with open('results.csv', 'w', newline='') as csvfile:
         # Get the Vrms value
         vrms = getVrms()
 
+        # Get the THD value
+        thd = getTHD(freq)
+
         # Stop the sine wave generation
         stopSine()
 
-        # Store the frequency and Vpp value in the results list
+        # Store the frequency and Vpp and THD value in the results list
         voltages.append(vrms)
+        thds.append(thd)
 
-        csvwriter.writerow([freq, vrms])
+        csvwriter.writerow([freq, vrms, thd])
 
 # Close the oscilloscope
 MSO_X_3024T.close()
@@ -138,7 +156,18 @@ plt.plot(frequencies, voltages_dbvrms, marker='o')
 plt.xscale('log')
 plt.xlabel('Frequency (Hz)')
 plt.ylabel('Vpbtl (dBVrms)')
-plt.title('Frequency vs Vpbtl')
+plt.title('Vpbtl vs Frequency')
 plt.grid(True, which='both')
-plt.savefig('frequency_vs_vdbvrms.png')
+plt.savefig('vdbvrms_vs_frequency.png')
+plt.show()
+
+# Plot THD vs Frequency
+plt.figure()
+plt.plot(frequencies, thds, marker='o')
+plt.xscale('log')
+plt.xlabel('Frequency (Hz)')
+plt.ylabel('THD (%)')
+plt.title('THD vs Frequency')
+plt.grid(True, which='both')
+plt.savefig('thd_vs_frequency.png')
 plt.show()
