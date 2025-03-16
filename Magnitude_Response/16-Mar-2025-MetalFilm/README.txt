@@ -23,6 +23,7 @@ VOLUME          DEFAULT
 =========================
 REMARKS
 =========================
+METAL FILM CAP
 HEATSINK + FAN was used to cool PA, thermal cam shows ~40 degC (majority of IC is blocked by heatsink)
 No error showed up on I2C
 24Vin, 160mA when playing
