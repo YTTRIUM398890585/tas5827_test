@@ -32,7 +32,7 @@ void user_setup()
 	// powerAmp.setGPIOSel(TAS5827::GPIO_Sel_t::PVDD_DROP, TAS5827::GPIO_Sel_t::PVDD_DROP, TAS5827::GPIO_Sel_t::PVDD_DROP);
 
 	// Set the play volume
-	float dB = -20;
+	float dB = -5;
 
 	uint8_t vol = 0;
 
