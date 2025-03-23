@@ -34,28 +34,25 @@ data = pd.read_csv(input_csv_file, skiprows=1)
 
 # Extract time and voltage
 freq = data.iloc[:, 0].values
-voltage = data.iloc[:, 1].values
+thd = data.iloc[:, 2].values
 
 print("freq: ", freq)
-print("Voltage: ", voltage)
+print("thd: ", thd)
 
 # change to floats
 freq = [float(i) for i in freq]
-voltage = [float(i) for i in voltage]
-
-# Convert Vrms values to dBVrms (referencing 1Vrms)
-voltages_dbvrms = [20 * math.log10(vrms / 1.0) for vrms in voltage]
+thd = [float(i) for i in thd]
 
 # Plot FFT
 plt.figure()
-plt.plot(freq, voltages_dbvrms, marker='o')
+plt.plot(freq, thd, marker='o')
 plt.xscale('log')
 # plt.ylim(bottom=0)
 plt.grid(which='both', linestyle='--', linewidth=0.5)
 plt.grid(which='major', linestyle='-', linewidth=1)
 plt.xlabel('Frequency (Hz)')
-plt.ylabel('Vpbtl (dBVrms)')
-plt.title('Vpbtl vs Frequency')
+plt.ylabel('thd (%)')
+plt.title('thd vs Frequency')
 plt.grid(True, which='both')
-# plt.savefig(output_directory + '/vdbvrms_vs_frequency_from0.png')
+plt.savefig(output_directory + '/thd_vs_frequency.png')
 plt.show()
