@@ -11,7 +11,7 @@ import time
 # CONSTANTS
 # Couldnt figure out how to set static IP for the scope
 # DEVICE = 'TCPIP0::169.254.212.129::INSTR'
-DEVICE = 'TCPIP0::169.254.215.207::INSTR'
+DEVICE = 'TCPIP0::169.254.201.215::INSTR'
 MEASUREMENT_CHANNEL = 'MATH1'
 DELAY = 10  # Delay in seconds to wait for the signal to stabilize
 

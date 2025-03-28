@@ -44,6 +44,8 @@ void user_setup()
 
 	// Set other stuff
 	powerAmp.setPvddUvCtrl(true, TAS5827::UV_Avg_t::NO_AVG, true);
+	// powerAmp.setLoopBW(TAS5827::Loop_BW_t::LOOP_BW_175kHZ);
+	powerAmp.setLoopBW(TAS5827::Loop_BW_t::LOOP_BW_100kHZ);
 	// powerAmp.setMiscCtrl2(true, true, true);
 
 	// Set top play
@@ -71,6 +73,19 @@ void user_loop()
 	}
 	else {
 		SEGGER_RTT_WriteString(0, "Error reading clock detection status\r\n");
+	}
+
+	TAS5827::Loop_BW_t loopBW;
+
+	if (powerAmp.getLoopBW(&loopBW)) {
+		loopBW == TAS5827::Loop_BW_t::LOOP_BW_80KHZ    ? SEGGER_RTT_WriteString(0, "Loop BW: 80 kHz\r\n")
+		: loopBW == TAS5827::Loop_BW_t::LOOP_BW_100kHZ ? SEGGER_RTT_WriteString(0, "Loop BW: 100 kHz\r\n")
+		: loopBW == TAS5827::Loop_BW_t::LOOP_BW_120kHZ ? SEGGER_RTT_WriteString(0, "Loop BW: 120 kHz\r\n")
+		: loopBW == TAS5827::Loop_BW_t::LOOP_BW_175kHZ ? SEGGER_RTT_WriteString(0, "Loop BW: 175 kHz\r\n")
+													   : SEGGER_RTT_WriteString(0, "Loop BW: Unknown\r\n");
+	}
+	else {
+		SEGGER_RTT_WriteString(0, "Error getChanFault\r\n");
 	}
 
 	uint8_t reg;
