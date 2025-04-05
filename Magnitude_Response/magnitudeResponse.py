@@ -56,7 +56,7 @@ def setFreq(freq):
     # print("\n")
 
     # Set RPi to generate signal and play through I2S
-    command = 'python play_sine_modified.py -d 0 ' + str(freq)
+    command = 'python play_sine_modified.py -d 0 -a 1 ' + str(freq)
     channel.send(command + '\n')
     time.sleep(1)  # Wait for the command to execute
     output = channel.recv(1024).decode('ascii')
