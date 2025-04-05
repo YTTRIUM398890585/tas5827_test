@@ -51,6 +51,9 @@ void user_setup()
 	powerAmp.setLoopBW(TAS5827::Loop_BW_t::LOOP_BW_175kHZ);
 	// powerAmp.setMiscCtrl2(true, true, true);
 
+	powerAmp.setDspPgmMode(false, false, true);
+	powerAmp.setDspCtrl(TAS5827::Proc_Rate_t::PROC_RATE_INPUT, false, true);
+
 	// Set top play
 	powerAmp.setDevCtrl2(true, false, false, TAS5827::Power_State_t::PLAY);
 }
