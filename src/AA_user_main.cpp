@@ -48,8 +48,7 @@ void user_setup()
 
 	// Set other stuff
 	powerAmp.setPvddUvCtrl(true, TAS5827::UV_Avg_t::NO_AVG, true);
-	// powerAmp.setLoopBW(TAS5827::Loop_BW_t::LOOP_BW_175kHZ);
-	powerAmp.setLoopBW(TAS5827::Loop_BW_t::LOOP_BW_100kHZ);
+	powerAmp.setLoopBW(TAS5827::Loop_BW_t::LOOP_BW_175kHZ);
 	// powerAmp.setMiscCtrl2(true, true, true);
 
 	// Set top play
