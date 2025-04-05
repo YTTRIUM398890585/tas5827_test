@@ -1,4 +1,5 @@
 #include "AA_user_main.h"
+#include <stdio.h>
 #include "main.h"
 #include "SEGGER_RTT.h "
 
