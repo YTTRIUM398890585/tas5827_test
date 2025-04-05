@@ -72,7 +72,12 @@ def stopSine():
 
 # Define the set of frequencies to loop through
 # Every integer multiple of 1000 Hz from 100 Hz to 80 kHz
-frequencies = [1000 * i for i in range(1, 81)]
+# frequencies = [1000 * i for i in range(1, 81)]
+
+# Every integer multiple of 5000 Hz from 100 Hz to 80 kHz
+frequencies = [1000] + [5000 * i for i in range(1, 17)]
+print("frequencies = " + str(frequencies))
+
 # Short one for sanity check
 # frequencies = [1000, 10000, 50000, 60000, 70000, 80000]
 
