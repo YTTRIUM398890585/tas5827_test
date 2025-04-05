@@ -89,7 +89,7 @@ MSO_X_3024T = rm.open_resource(DEVICE)
 # SSH into the Raspberry Pi
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh.connect('192.168.1.11', username='nav', password='bb')  # lol
+ssh.connect('192.168.137.20', username='modem1', password='bb')  # lol
 
 # Open a channel
 channel = ssh.invoke_shell()
