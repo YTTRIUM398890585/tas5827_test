@@ -32,15 +32,18 @@ void user_setup()
 	// powerAmp.setGPIOSel(TAS5827::GPIO_Sel_t::PVDD_DROP, TAS5827::GPIO_Sel_t::PVDD_DROP, TAS5827::GPIO_Sel_t::PVDD_DROP);
 
 	// Set the play volume
-	float dB = -5;
+	float vol_dB   = 10;  // -103 to 24 dB
+	float aGain_dB = -15; // -15.5 to 0 dB
 
-	uint8_t vol = 0;
+	uint8_t vol   = 0;
+	uint8_t aGain = 0;
 
-	vol = static_cast<float>((24.0 - dB) * 2.0);
+	vol   = static_cast<uint8_t>((24.0 - vol_dB) * 2.0);
+	aGain = static_cast<uint8_t>(-aGain_dB * 2.0);
 
 	powerAmp.setDigVolLeft(vol);
 	powerAmp.setDigVolRight(vol);
-	powerAmp.setAnalogGain(0x00);
+	powerAmp.setAnalogGain(aGain);
 
 	// Set other stuff
 	powerAmp.setPvddUvCtrl(true, TAS5827::UV_Avg_t::NO_AVG, true);
@@ -73,6 +76,38 @@ void user_loop()
 	}
 	else {
 		SEGGER_RTT_WriteString(0, "Error reading clock detection status\r\n");
+	}
+
+	// read volume and analog gain
+	uint8_t vol;
+	float   aGain_dB;
+
+	if (powerAmp.getDigVolLeft(&vol)) {
+		float vol_dB = (24.0f - (static_cast<float>(vol) / 2.0f));
+
+		int volInt = (int)(vol_dB);
+		int volDec = (int)(vol_dB * 10) % 10;       // Get the decimal part
+		volDec     = volDec < 0 ? -volDec : volDec; // Make sure it's positive
+
+		char buffer[50];
+		sprintf(buffer, "Digital Volume: %d.%u dB\r\n", volInt, volDec);
+		SEGGER_RTT_WriteString(0, buffer);
+	}
+	else {
+		SEGGER_RTT_WriteString(0, "Error reading left volume\r\n");
+	}
+
+	if (powerAmp.getAnalogGain(&aGain_dB)) {
+		int aGainInt = (int)(aGain_dB);
+		int aGainDec = (int)(aGain_dB * 10) % 10;           // Get the decimal part
+		aGainDec     = aGainDec < 0 ? -aGainDec : aGainDec; // Make sure it's positive
+
+		char buffer[50];
+		sprintf(buffer, "Analog Gain: %d.%u dB\r\n", aGainInt, aGainDec);
+		SEGGER_RTT_WriteString(0, buffer);
+	}
+	else {
+		SEGGER_RTT_WriteString(0, "Error reading analog gain\r\n");
 	}
 
 	TAS5827::Loop_BW_t loopBW;
