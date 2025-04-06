@@ -411,4 +411,5 @@ private:
 
 	bool writeRegister(uint8_t reg, uint8_t value);
 	bool readRegister(uint8_t reg, uint8_t* p_value);
+	bool loadConfig();
 };

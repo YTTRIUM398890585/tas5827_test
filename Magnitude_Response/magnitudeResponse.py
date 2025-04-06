@@ -11,9 +11,10 @@ import time
 # CONSTANTS
 # Couldnt figure out how to set static IP for the scope
 # DEVICE = 'TCPIP0::169.254.212.129::INSTR'
-# MEASUREMENT_CHANNEL = 'MATH1'
+DEVICE = 'TCPIP0::169.254.239.95::INSTR'
+MEASUREMENT_CHANNEL = 'MATH1'
 # MEASUREMENT_CHANNEL = 'CHANnel1'
-MEASUREMENT_CHANNEL = 'CHANnel3'
+# MEASUREMENT_CHANNEL = 'CHANnel3'
 DELAY = 10  # Delay in seconds to wait for the signal to stabilize
 
 
@@ -57,7 +58,7 @@ def setFreq(freq):
     # print("\n")
 
     # Set RPi to generate signal and play through I2S
-    command = 'python play_sine_modified.py -d 0 -a 1 ' + str(freq)
+    command = 'python play_sine_modified.py -d 0 -a 0.2 -s 192000 ' + str(freq)
     channel.send(command + '\n')
     time.sleep(1)  # Wait for the command to execute
     output = channel.recv(1024).decode('ascii')

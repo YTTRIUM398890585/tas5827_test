@@ -2,9 +2,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "stm32f1xx_hal.h"
+#include "tas5827_config.h"
 
 /**
- * @brief begin with the I2C address and the I2C handle
+ * @brief begin with the I2C address and the I2C handle then shove the config into the device
  *
  * @param address 7-bits I2C address
  * @param DUMMY_I2C_HANDLE TODO: PLEASE HANDLE THIS
@@ -15,7 +16,18 @@ bool TAS5827::begin(uint8_t address, I2C_HandleTypeDef* i2cHandle)
 {
 	this->address    = address;
 	this->i2cHandler = i2cHandle;
-	return true;
+
+	bool ret = true;
+
+	// Reset everything
+	ret &= this->setModuleReset();
+	ret &= this->setRegisterReset();
+	ret &= this->setFaultClear();
+
+	// Load the config
+	ret &= this->loadConfig();
+
+	return ret;
 }
 
 /* ------------------------------------------------------------ */
@@ -1470,4 +1482,51 @@ bool TAS5827::readRegister(uint8_t reg, uint8_t* p_value)
 	else {
 		return true;
 	}
+}
+
+/**
+ * @brief load the configuration from the registers array
+ *
+ * @return true - OK
+ * @return false - Error
+ */
+bool TAS5827::loadConfig()
+{
+	cfg_reg* r = registers;
+	int      n = sizeof(registers) / sizeof(registers[0]);
+	int      i = 0;
+
+	HAL_StatusTypeDef status = HAL_OK;
+
+	while (i < n) {
+		switch (r[i].command) {
+		case CFG_META_SWITCH:
+			// Used in legacy applications.  Ignored here.
+			break;
+		case CFG_META_DELAY:
+			// delay(r[i].param);
+			HAL_Delay(r[i].param);
+			break;
+		case CFG_META_BURST:
+			// i2c_write((unsigned char*)&r[i + 1], r[i].param);
+			// i += (r[i].param / 2) + 1;
+
+			// Not used in config, ignore for now
+			break;
+		default:
+			// i2c_write((unsigned char*)&r[i], 2);
+			// the first value is the memory address, the second is the value to write
+			status = HAL_I2C_Mem_Write(
+				this->i2cHandler, this->address, (uint16_t)r[i].offset, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&(r[i].value), 1, 1000
+			);
+			break;
+		}
+		i++;
+
+		if (status != HAL_OK) {
+			return false;
+		}
+	}
+
+	return true;
 }

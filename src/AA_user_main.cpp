@@ -16,12 +16,19 @@ void user_setup()
 
 	// ADD SETUP CODE HERE
 	// I2C Address of 0b110_0000 has to be shifted to the left to be 0b1100_000X
-	powerAmp.begin(0xC0, &hi2c1);
+	if (powerAmp.begin(0xC0, &hi2c1)) {
+		SEGGER_RTT_WriteString(0, "TAS5827 Initialized\r\n");
+	}
+	else {
+		SEGGER_RTT_WriteString(0, "TAS5827 Initialization Failed\r\n");
+		while (1) {
+		}
+	}
 
 	// Reset everything
-	powerAmp.setModuleReset();
-	powerAmp.setRegisterReset();
-	powerAmp.setFaultClear();
+	// powerAmp.setModuleReset();
+	// powerAmp.setRegisterReset();
+	// powerAmp.setFaultClear();
 
 	// Set device mode
 	powerAmp.setDevCtrl1(TAS5827::Fsw_t::FSW_1024KHZ, true, TAS5827::Modulation_t::MOD_BD);
@@ -51,8 +58,11 @@ void user_setup()
 	powerAmp.setLoopBW(TAS5827::Loop_BW_t::LOOP_BW_175kHZ);
 	// powerAmp.setMiscCtrl2(true, true, true);
 
+	// powerAmp.setDspPgmMode(false, false, true);
+	// powerAmp.setDspCtrl(TAS5827::Proc_Rate_t::PROC_RATE_INPUT, false, true);
+
 	powerAmp.setDspPgmMode(false, false, true);
-	powerAmp.setDspCtrl(TAS5827::Proc_Rate_t::PROC_RATE_INPUT, false, true);
+	powerAmp.setDspCtrl(TAS5827::Proc_Rate_t::PROC_RATE_INPUT, false, false);
 
 	// Set top play
 	powerAmp.setDevCtrl2(true, false, false, TAS5827::Power_State_t::PLAY);
