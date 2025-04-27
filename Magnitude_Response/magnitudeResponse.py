@@ -11,7 +11,7 @@ import time
 # CONSTANTS
 # Couldnt figure out how to set static IP for the scope
 # DEVICE = 'TCPIP0::169.254.212.129::INSTR'
-DEVICE = 'TCPIP0::169.254.239.95::INSTR'
+DEVICE = 'TCPIP0::169.254.52.2::INSTR'
 MEASUREMENT_CHANNEL = 'MATH1'
 # MEASUREMENT_CHANNEL = 'CHANnel1'
 # MEASUREMENT_CHANNEL = 'CHANnel3'
@@ -58,7 +58,7 @@ def setFreq(freq):
     # print("\n")
 
     # Set RPi to generate signal and play through I2S
-    command = 'python play_sine_modified.py -d 0 -a 0.2 -s 192000 ' + str(freq)
+    command = 'python play_sine_modified.py -d 0 -a 0.5 -s 384000 ' + str(freq)
     channel.send(command + '\n')
     time.sleep(1)  # Wait for the command to execute
     output = channel.recv(1024).decode('ascii')
@@ -77,11 +77,18 @@ def stopSine():
 # frequencies = [1000 * i for i in range(1, 81)]
 
 # Every integer multiple of 5000 Hz from 100 Hz to 80 kHz
-frequencies = [1000] + [5000 * i for i in range(1, 17)]
-print("frequencies = " + str(frequencies))
+# frequencies = [5000 * i for i in range(1, 17)]
+# Every integer multiple of 5000 Hz from 100 Hz to 100 kHz
+# frequencies = [5000 * i for i in range(1, 21)]
+
+# Every integer multiple of 100 Hz from 1000 Hz to 20 kHz
+frequencies = [1000 * i for i in range(1, 21)]
 
 # Short one for sanity check
 # frequencies = [1000, 10000, 50000, 60000, 70000, 80000]
+
+print("frequencies = " + str(frequencies))
+
 
 # Create a list to store the results
 voltages = []
@@ -92,6 +99,9 @@ rm = visa.ResourceManager()
 
 # Open the oscilloscope
 MSO_X_3024T = rm.open_resource(DEVICE)
+
+# Set timeout to be longer
+MSO_X_3024T.timeout = 10000
 
 # SSH into the Raspberry Pi
 ssh = paramiko.SSHClient()
